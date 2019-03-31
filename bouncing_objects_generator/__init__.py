@@ -1,0 +1,2 @@
+from bouncing_objects_generator import object
+from bouncing_objects_generator import square
