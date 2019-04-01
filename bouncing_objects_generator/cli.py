@@ -1,5 +1,6 @@
 import argparse
 import random
+import sys
 
 import numpy as np
 
@@ -24,7 +25,10 @@ class Cli:
                        speed=random.choice(range(1, 20)))
             )
 
-        for _ in range(window_size):
+        for i in range(window_size):
+            sys.stderr.write(f'{i+1}/{window_size}\r')
+            sys.stderr.flush()
+
             window = None
             for _ in range(frames_per_window):
                 image = np.asarray(frame.draw(), dtype=np.uint8).reshape(1, frame_height, frame_width)
@@ -40,6 +44,8 @@ class Cli:
                 all_windows = np.vstack((all_windows,
                                          window.reshape(1, window_shape[0], window_shape[1],
                                                         window_shape[2])))
+        sys.stderr.write('\n')
+
         all_windows = all_windows.transpose(1, 0, 2, 3)
         np.save(npy_output, all_windows)
 
