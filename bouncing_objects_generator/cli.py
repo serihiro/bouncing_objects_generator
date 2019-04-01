@@ -40,7 +40,7 @@ class Cli:
                 all_windows = np.vstack((all_windows,
                                          window.reshape(1, window_shape[0], window_shape[1],
                                                         window_shape[2])))
-
+        all_windows = all_windows.transpose(1, 0, 2, 3)
         np.save(npy_output, all_windows)
 
 
