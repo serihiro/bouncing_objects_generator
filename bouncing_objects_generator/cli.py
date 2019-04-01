@@ -16,7 +16,6 @@ class Cli:
             frames_per_window: int, window_size: int, npy_output: str):
 
         frame = Frame(width=frame_width, height=frame_height)
-        all_windows = None
         for _ in range(objects_size):
             frame.register_object(
                 Square(width=object_width, height=object_height,
@@ -25,8 +24,10 @@ class Cli:
                        speed=random.choice(range(1, 20)))
             )
 
+        all_windows = []
+        window_shape = (frames_per_window, 1, frame_height, frame_width)
         for i in range(window_size):
-            sys.stderr.write(f'{i+1}/{window_size}\r')
+            sys.stderr.write(f'{i + 1}/{window_size}\r')
             sys.stderr.flush()
 
             window = None
@@ -37,17 +38,9 @@ class Cli:
                 else:
                     window = np.vstack((window, image))
 
-            window_shape = window.shape
-            if all_windows is None:
-                all_windows = window.reshape(1, window_shape[0], window_shape[1], window_shape[2])
-            else:
-                all_windows = np.vstack((all_windows,
-                                         window.reshape(1, window_shape[0], window_shape[1],
-                                                        window_shape[2])))
+            all_windows.append(window.reshape(window_shape[0], window_shape[1], window_shape[2], window_shape[3]))
         sys.stderr.write('\n')
-
-        all_windows = all_windows.transpose(1, 0, 2, 3)
-        np.save(npy_output, all_windows)
+        np.save(npy_output, np.concatenate(all_windows, axis=1))
 
 
 def main():
